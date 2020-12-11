@@ -9,12 +9,15 @@
 #define LOG_LEVEL_INFO  2
 #define LOG_LEVEL_DEBUG 3
 
-#define LOG(level, ...)  \
+#define LOG(level, format, ...)  \
   if (level > m_log_level) ; \
-  else printf("[ collectd-fs ]: "__VA_ARGS__);
+  else { \
+    printf("[ collectd-fs ]: "); \
+    printf(format, __VA_ARGS__); \
+  }
 
-#define DEBUG(...)  LOG(LOG_LEVEL_DEBUG, __VA_ARGS__)
-#define ERROR(...)  LOG(LOG_LEVEL_ERROR, __VA_ARGS__)
-#define INFO(...)   LOG(LOG_LEVEL_INFO, __VA_ARGS__)
+#define DEBUG(format, ...)  LOG(LOG_LEVEL_DEBUG, format, __VA_ARGS__)
+#define ERROR(format, ...)  LOG(LOG_LEVEL_ERROR, format, __VA_ARGS__)
+#define INFO(format, ...)   LOG(LOG_LEVEL_INFO, format, __VA_ARGS__)
 
 #endif /* _COMMON_H_ */
