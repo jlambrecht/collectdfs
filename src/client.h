@@ -23,7 +23,7 @@ namespace collectd_fs
 	private:
 		::lcc_connection_t *m_handle;
 
-		static const int MAX_STAT_STR_LEN = 64;
+		static const int MAX_STAT_STR_LEN = 1024;
 	};
 }
 

@@ -59,10 +59,10 @@ list<string> collectd_client::get_stat_list()
 
 	for (unsigned int i = 0; i < num_stats; i++) {
 
-		char stat_str[MAX_STAT_STR_LEN];
+		char stat_str[MAX_STAT_STR_LEN] = {0};
 
 		result =
-		    lcc_identifier_to_string(m_handle, stat_str, MAX_STAT_STR_LEN,
+		    lcc_identifier_to_string(m_handle, stat_str, MAX_STAT_STR_LEN - 1,
 					     	 	     &stats[i]);
 
 		stat_list.push_back(stat_str);
