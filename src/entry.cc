@@ -1,6 +1,7 @@
 
 #include "common.h"
 #include "entry.h"
+#include <memory>
 
 using namespace collectd_fs;
 using collectd_fs::entry;
@@ -9,6 +10,17 @@ entry::entry(string token) :
 	m_token(token),
 	m_last_update_time(0)
 {}
+
+entry * entry::clone () const {
+	std::unique_ptr<entry> copy (new entry(m_token));
+	for(auto sub : m_sub_entries) {
+		copy->m_sub_entries.push_back(sub->clone());
+	}
+
+	copy->m_complete_stat_name = m_complete_stat_name;
+	copy->m_last_update_time = m_last_update_time;
+	return copy.release();
+}
 
 entry::~entry()
 {

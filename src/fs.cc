@@ -6,12 +6,18 @@
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
+#include <mutex>
 
 #include "fs.h"
 #include "stat_tree.h"
 
 using collectd_fs::filesystem;
 using std::string;
+
+namespace
+{
+	std::mutex g_mutex;
+}
 
 filesystem::filesystem() :
 	m_log_level(LOG_LEVEL_ERROR),
@@ -41,11 +47,11 @@ int filesystem::init(collectd_client *client)
 int filesystem::open(string path, struct fuse_file_info *file_info)
 {
 	DEBUG("open - %s\n", path.c_str());
-
+	const std::lock_guard<std::mutex> lock(g_mutex);
 	entry *file_entry = m_stat_tree->get_entry(path);
 
 	if (file_entry) {
-		file_info->fh = (uint64_t) file_entry;
+		file_info->fh = reinterpret_cast<uint64_t>(file_entry->clone());
 		return 0;
 	}
 	else
@@ -54,10 +60,18 @@ int filesystem::open(string path, struct fuse_file_info *file_info)
 	return 0;
 }
 
+int filesystem::release(string path, struct fuse_file_info * file_info)
+{
+	DEBUG("release - %s\n", path.c_str());
+	delete reinterpret_cast<entry*> (file_info->fh);
+	return 0;
+}
+
 int filesystem::read(string path, char *buf, size_t size, off_t offset, 
 					 struct fuse_file_info *file_info)
 {
 	DEBUG("read - %s\n", path.c_str());
+	const std::lock_guard<std::mutex> lock(g_mutex);
 	
 	entry *file_entry = (entry *) file_info->fh;
 
@@ -83,6 +97,7 @@ int filesystem::readdir(string path, void *buf, fuse_fill_dir_t filler,
 						off_t offset, struct fuse_file_info *file_info)
 {
 	DEBUG("readdir - %s\n", path.c_str());
+	const std::lock_guard<std::mutex> lock(g_mutex);
 
 	m_stat_tree->refresh();
 
@@ -116,6 +131,7 @@ int filesystem::getattr(string path, struct stat *stbuf)
 {
 
 	DEBUG("getattr - %s\n", path.c_str());
+	const std::lock_guard<std::mutex> lock(g_mutex);
 
 	memset(stbuf, 0, sizeof(*stbuf));
 

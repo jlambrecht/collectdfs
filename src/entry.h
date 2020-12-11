@@ -16,6 +16,8 @@ namespace collectd_fs
 	public:
 		entry(string stat_name);
 		~entry();
+
+		entry* clone () const;
 		
 		entry *add_sub_entry(string token);
 	

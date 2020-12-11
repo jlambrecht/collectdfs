@@ -26,6 +26,8 @@ namespace collectd_fs
 
 		int open(string path, struct fuse_file_info *file_info);
 
+		int release(string path, struct fuse_file_info *file_info);
+
 		int read(string path, char *buf, size_t size, off_t offset, 
 				 struct fuse_file_info *file_info);
 

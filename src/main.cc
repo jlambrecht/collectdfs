@@ -97,6 +97,7 @@ int main(int argc, char **argv)
 	collectd_fs_opers.readdir = wrapper_readdir;
 	collectd_fs_opers.getattr = wrapper_getattr;
 	collectd_fs_opers.open    = wrapper_open;
+	collectd_fs_opers.release    = wrapper_release;
 	collectd_fs_opers.read    = wrapper_read;
 
 	filesystem *fs = new filesystem();
