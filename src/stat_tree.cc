@@ -45,6 +45,14 @@ int stat_tree::populate(list<string> stat_list)
 
 		string complete_stat_str = str;
 
+		/* We don't need hostname in the collectd filesystem so start after
+		 * the first slash */
+		size_t first_slash = str.find("/");
+		if (first_slash != string::npos)
+		{
+				str = str.substr(first_slash);
+		}
+
 		/* Convert slashes to spaces so we can parse with stringstream */
 		std::replace(str.begin(), str.end(), '/', ' ');
 
