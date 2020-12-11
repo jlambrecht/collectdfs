@@ -41,8 +41,6 @@ string collectd_client::get_stat(string stat_name)
 
 	stat_value_ss << ret_values[0];
 
-	free(ret_values);
-
 	return stat_value_ss.str();
 }
 
@@ -58,20 +56,16 @@ list<string> collectd_client::get_stat_list()
 		std::cerr << "Couldn't get list of stats from collectd ("
 				  << lcc_strerror(m_handle) << std::endl;
 	}
-	else
-	{
-		for (unsigned int i = 0; i < num_stats; i++) {
 
-			char stat_str[MAX_STAT_STR_LEN] = {0};
+	for (unsigned int i = 0; i < num_stats; i++) {
 
-			result =
-				lcc_identifier_to_string(m_handle, stat_str, MAX_STAT_STR_LEN - 1,
-             &stats[i]);
+		char stat_str[MAX_STAT_STR_LEN] = {0};
 
-			stat_list.push_back(stat_str);
-		}
+		result =
+		    lcc_identifier_to_string(m_handle, stat_str, MAX_STAT_STR_LEN - 1,
+					     	 	     &stats[i]);
 
-		free(stats);
+		stat_list.push_back(stat_str);
 	}
 
 	return stat_list;
