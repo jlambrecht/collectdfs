@@ -76,7 +76,7 @@ int stat_tree::populate(list<string> stat_list)
 			}
 		}
 
-		std::cout << str << std::endl;
+		//std::cout << str << std::endl;
 		std::stringstream ss(str);
 
 		while (ss.good()) {
